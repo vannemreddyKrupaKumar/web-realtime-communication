@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat App</title>
+    <link rel="icon" href="#">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style_chat.css">
+</head>
+
+<body class="#37474f blue-grey darken-2 " id="some">
+    <div class=" #37474f blue-grey darken-3">
+        <div id="trans">
+            <i class="small material-icons">g_translate</i>
+            <div id="google_translate_element"></div>
+        </div>
+        <div id="chatBox">
+        </div>
+        <form action="/" onsubmit="sendMsg();return false;">
+            <div id="form">
+                <input type="text" placeholder="messge" id="msg" style="padding: 0 1%;" required
+                    class="#37474f blue-grey darken-3 white-text lighten-5-text" />
+                <button class="btn waves-effect">send</button>
+            </div>
+        </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="materialize.min.js"></script>
+    <script>
+        let getParams = (url) => {
+            var params = {};
+            var parser = document.createElement('a');
+            parser.href = url;
+            var query = parser.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                params[pair[0]] = decodeURIComponent(pair[1]);
+            }
+            return params;
+        }
+        let queryParams = getParams(window.location.href);
+
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en'
+                },
+                'google_translate_element'
+            );
+            if (typeof (document.querySelector) == 'function') {
+                document.querySelector('.goog-logo-link').setAttribute('style', 'display: none');
+                document.querySelector('.goog-te-gadget').setAttribute('style', 'font-size: 0');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.dropdown-trigger');
+            var instances = M.Dropdown.init(elems, {
+                alignment: 'down'
+            });
+        });
+
+        let socket = io();
+        let room = queryParams.roomid;
+        let name = queryParams.uName;
+        let chatBox = document.getElementById("chatBox");
+        let chatBox1 = document.getElementById("body");
+        var xH = chatBox.scrollHeight;
+
+        socket.emit("joinChatRoom", room, name);
+
+        let sendMsg = () => {
+            let msg = document.getElementById("msg").value;
+            document.getElementById("msg").value = "";
+            socket.emit("sendMsg", room, name, msg);
+            var div = document.createElement("div");
+            div.className = "right";
+            div.innerHTML = "<h7 class='righth7'>" + name + "</h7><br>" + msg;
+            chatBox.appendChild(div);
+            chatBox.scrollTo(0, xH);
+        }
+
+        socket.on("newMsg", (name, msg) => {
+            var div = document.createElement("div");
+            div.className = "left  light-blue lighten-5";
+            div.innerHTML = "<h7 class='lefth7'>" + name + "</h7><br>" + msg;
+            chatBox.appendChild(div);
+            chatBox.scrollTo(0, xH);
+        });
+
+        let translate = () => {
+            let divs = document.querySelectorAll("#chatBox div");
+            console.log(divs);
+            let eachdiv = [];
+            for (let i = 0; i < divs.length; i += 1) {
+                eachdiv.push(divs[i].textContent);
+                divs[i].innerHTML = "" + i + divs[i].innerHTML;
+            }
+            console.log(eachdiv);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Conference</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    #consultingRoom {
+        width: 100%;
+        height: 90vh;
+        display: flex;
+    }
+
+    #localVideo,
+    #remoteVideo {
+        object-fit: cover;
+        margin: 0% 0.15%;
+        width: 49%;
+        height: 100vh;
+        background-color: black;
+    }
+
+    #xyz{
+        display: flex;
+        justify-content: space-between;
+        margin: 0 20%;
+        color: rgb(255, 255, 255);
+    }
+
+    #one{
+        position: absolute;
+        top: 50%;
+        left: 20%;
+    }
+
+    #two{
+        position: absolute;
+        top: 50%;
+        right: 20%;
+    }
+</style>
+
+<body>
+    <div id="consultingRoom">
+        <video autoplay id="localVideo"></video>
+        <video autoplay id="remoteVideo"></video>
+    </div>
+    <div id="xyz">
+        <h1 id="one">You</h1>
+        <h1 id="two">Remote User</h1>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let getParams = (url) => {
+            var params = {};
+            var parser = document.createElement('a');
+            parser.href = url;
+            var query = parser.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                params[pair[0]] = decodeURIComponent(pair[1]);
+            }
+            return params;
+        }
+        let queryParams = getParams(window.location.href);
+    </script>
+    <script src="videoconf.js"></script>
+</body>
+
+</html>

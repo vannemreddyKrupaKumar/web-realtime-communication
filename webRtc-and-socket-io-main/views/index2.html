@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Viewer</title>
+  <meta charset="UTF-8" />
+  <script src="/jquery.min.js"></script>
+  <script src="/colResizable-1.5.min.js"></script>
+  <link href="/styles.css" rel="stylesheet" />
+  <link rel="icon" href="#">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="materialize.min.css" media="screen,projection" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="materialize.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #container {
+      height: 100vh;
+      display: grid;
+      padding: 0vh 0.1vh;
+      grid-template-columns: 5fr 2fr;
+      grid-template-rows: 9fr 1fr;
+      grid-template-areas:
+        "scrn msg"
+        "option msg";
+    }
+
+    #msgcontainer {
+      grid-area: msg;
+      border: 1px solid rgb(135, 132, 132);
+    }
+
+    #message-container {
+      height: 92vh;
+      overflow-y: scroll;
+    }
+
+    #set {
+      grid-area: option;
+    }
+
+    #videoContainer {
+      position: relative;
+      margin: 0.1rem;
+      height: 90vh;
+      grid-area: scrn;
+    }
+
+    .videoInsert {
+      position: absolute;
+      background-color: black;
+      width: 100%;
+      height: 100%;
+    }
+
+    #chatoption {
+      width: 100%;
+      bottom: 0;
+      display: flex;
+    }
+
+    #chatoption>.inp {
+      flex-grow: 2;
+      margin-left: 1vh;
+    }
+
+    #chatoption>.btn {
+      flex-grow: 1;
+    }
+
+    @media screen and (max-width: 1000px) {
+      #container {
+        width: 100%;
+        height: 100vh;
+        grid-template-columns: 1fr;
+        grid-template-rows: 5fr 2fr 1fr;
+        grid-template-areas:
+          "scrn"
+          "option"
+          "msg";
+      }
+
+      #videoContainer {
+        position: relative;
+        margin: 0.1rem;
+        height: 40vh;
+      }
+
+      #message-container {
+        height: 50vh;
+        overflow-y: scroll;
+      }
+    }
+
+    .msgs {
+      box-shadow: 0 0 0 0.1rem rgba(182, 180, 180, 0.795);
+      padding: 0.1rem 0.5rem 1rem 1rem;
+      border-radius: 0.5rem;
+      margin: 0 0.25rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="videoContainer">
+      <video controls autoplay class="videoInsert" id="videoElement"></video>
+    </div>
+    <div id="set" style=" width:100%;resize:both; display:inline-block;">
+      <!-- <button class="waves-effect waves-light btn blue-grey darken-2">mike</button>
+      <button class="waves-effect waves-light btn blue-grey darken-2"> video</button> -->
+      <button onclick="btnJoinViewer()" class="waves-effect waves-light btn blue-grey darken-2">start viewing</button>
+    </div>
+    <div id="msgcontainer">
+      <div id="txt">
+        <div id="message-container">
+        </div>
+        <form onsubmit="sendMessage();return false;">
+          <div id="chatoption" class="cht">
+            <input class="inp" type="text" id="message">
+            <button class="waves-effect waves-light btn blue-grey darken-2">send</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let getParams = (url) => {
+      var params = {};
+      var parser = document.createElement('a');
+      parser.href = url;
+      var query = parser.search.substring(1);
+      var vars = query.split('&');
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        params[pair[0]] = decodeURIComponent(pair[1]);
+      }
+      return params;
+    }
+    let queryParams = getParams(window.location.href);
+  </script>
+  <script src="broadcast_client.js"></script>
+</body>
+
+</html>
